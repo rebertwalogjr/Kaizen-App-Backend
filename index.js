@@ -9,9 +9,13 @@ const uri = require("./constant-list");
 app.use(express.json());
 
 app.use(cors());
-app.options("*", cors())
+app.options("*", cors());
 
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
 
 app.get("/getNotes", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
