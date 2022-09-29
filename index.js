@@ -11,10 +11,9 @@ app.use(express.json());
 app.use(cors());
 app.options("*", cors());
 
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI || uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverApi: ServerApiVersion.v1,
 });
 
 app.get("/getNotes", (req, res) => {
@@ -111,6 +110,32 @@ app.post("/deleteTodo", (req, res) => {
     if (err) return console.log(err);
     res.json(response);
   });
+});
+
+app.post("/updateTodo", (req, res) => {
+  TodoModel.findOneAndUpdate(
+    { id: req.body.obj.id },
+    {
+      $set: { title: req.body.obj.title, content: req.body.obj.content, isDone: req.body.obj.isDone },
+    },
+    { new: true },
+    (err, response) => {
+      if (err) return console.log(err);
+      res.json(response);
+    }
+  );
+});
+
+app.post("/setTodoIsDone", (req, res) => {
+  TodoModel.findOneAndUpdate(
+    { id: req.body.obj.id },
+    { $set: { isDone: req.body.obj.isDone } },
+    { new: true },
+    (err, response) => {
+      if (err) return console.log(err);
+      res.json(response);
+    }
+  );
 });
 
 app.listen(process.env.PORT || 3001, () => {
